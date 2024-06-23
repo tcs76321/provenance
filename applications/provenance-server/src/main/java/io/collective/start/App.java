@@ -1,6 +1,9 @@
 package io.collective.start;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.collective.endpoints.*;
+import io.collective.restsupport.RestTemplate;
+import io.collective.workflow.WorkScheduler;
 import io.collective.articles.ArticleDataGateway;
 import io.collective.articles.ArticleRecord;
 import io.collective.articles.ArticlesController;
@@ -23,8 +26,16 @@ public class App extends BasicApp {
     public void start() {
         super.start();
 
-        { // todo - start the endpoint worker
-
+        {
+            // create an endpoint data gateway
+            EndpointDataGateway endpointDataGateway = new EndpointDataGateway();
+            // create a finder
+            EndpointWorkFinder finder = new EndpointWorkFinder(endpointDataGateway);
+            // create a list of workers
+            List< EndpointWorker> workers = List.of(new EndpointWorker(new RestTemplate(), articleDataGateway));
+            WorkScheduler<EndpointTask> scheduler = new WorkScheduler<>(finder, workers, 300);
+            // start the scheduler
+            scheduler.start();
         }
     }
 
