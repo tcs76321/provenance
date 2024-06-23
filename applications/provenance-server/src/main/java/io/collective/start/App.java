@@ -36,6 +36,7 @@ public class App extends BasicApp {
             WorkScheduler<EndpointTask> scheduler = new WorkScheduler<>(finder, workers, 300);
             // start the scheduler
             scheduler.start();
+            // it works
         }
     }
 
